@@ -1,0 +1,73 @@
+{% include "_flash.html" %}
+<div class="row">
+  <a hx-get="/ui/tickets" hx-target="#main">← Все тикеты</a>
+</div>
+<h2>Тикет #{{ ticket.number }}</h2>
+<div class="card">
+  <div class="row">
+    <span class="badge st-{{ ticket.status }}">{{ ticket.status_label }}</span>
+    <span class="badge pr-{{ ticket.priority }}">{{ ticket.priority_label }}</span>
+  </div>
+  <div class="muted">Категория: {{ ticket.category.name if ticket.category else "—" }}</div>
+  <div class="muted">Автор: {{ ticket.author.name if ticket.author else "—" }}</div>
+  <div class="muted">Исполнитель: {{ ticket.assignee.name if ticket.assignee else "—" }}</div>
+  <div class="muted">Создан: {{ ticket.created_at|dt("%d.%m.%Y %H:%M") }}</div>
+  <div class="row" style="margin-top:8px">
+    <form hx-post="/ui/tickets/{{ ticket.id }}/status" hx-target="#main" class="row">
+      <select name="status">
+        {% for code, label in Status.LABELS.items() %}
+        <option value="{{ code }}" {% if ticket.status == code %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button>Статус</button>
+    </form>
+    <form hx-post="/ui/tickets/{{ ticket.id }}/priority" hx-target="#main" class="row">
+      <select name="priority">
+        {% for code, label in Priority.LABELS.items() %}
+        <option value="{{ code }}" {% if ticket.priority == code %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button>Приоритет</button>
+    </form>
+  </div>
+</div>
+
+<h3>Лента</h3>
+{% for m in ticket.messages %}
+<div class="msg {{ m.kind }}">
+  <div class="muted">{{ m.kind_label }} · {{ m.author.name if m.author else "" }} · {{ m.created_at|dt("%d.%m %H:%M") }}</div>
+  {% if m.text %}<pre>{{ m.text }}</pre>{% endif %}
+  {% if m.meta %}<pre class="muted">{{ m.meta|meta }}</pre>{% endif %}
+  {% for a in m.attachments %}
+    {% if a.file_type == "photo" %}
+      <img class="att" data-file-id="{{ a.id }}" alt="фото">
+    {% else %}
+      <div><a data-file-id="{{ a.id }}" target="_blank">📎 {{ a.file_name or a.file_type }}</a></div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endfor %}
+
+<h3>Ответ</h3>
+<form class="stack" hx-post="/ui/tickets/{{ ticket.id }}/reply" hx-target="#main">
+  {% if reply_templates %}
+  <select onchange="applyTemplate(this)">
+    <option value="">— шаблон быстрого ответа —</option>
+    {% for name, text in reply_templates %}
+    <option data-text="{{ text }}">{{ name }}</option>
+    {% endfor %}
+  </select>
+  {% endif %}
+  <textarea id="reply-text" name="text" placeholder="Текст ответа или комментария" required></textarea>
+  <label><input type="checkbox" name="visible" value="1" style="width:auto"> Видно клиенту</label>
+  <button>Отправить</button>
+</form>
+
+<h3>Письмо</h3>
+{% if not mail_enabled %}
+  <p class="muted">Почта не настроена: задайте GMAIL_USER и GMAIL_APP_PASSWORD (SMTP/IMAP) или GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN (Gmail API) — см. README.</p>
+{% elif not email_templates %}
+  <p class="muted">Нет шаблонов писем — добавьте их в разделе «Шаблоны писем».</p>
+{% else %}
+  <div id="email-form" hx-get="/ui/tickets/{{ ticket.id }}/email-form" hx-trigger="load"></div>
+{% endif %}

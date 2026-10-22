@@ -1,0 +1,43 @@
+{% include "_flash.html" %}
+<h2>Чаты</h2>
+<p class="muted">Рабочий чат регистрируется командой <code>/register_chat &lt;категория&gt;</code> в самом чате,
+CRM-чат — командой <code>/set_support_chat</code>. Здесь можно сменить категорию или отключить чат.</p>
+{% for c in chats %}
+<div class="card">
+  <b>{{ c.title or c.tg_chat_id }}</b> <span class="muted">{{ c.tg_chat_id }}</span>
+  {% if c.is_support_chat %}<span class="badge st-new">CRM-чат поддержки</span>{% endif %}
+  <div class="row" style="margin-top:6px">
+    {% if not c.is_support_chat %}
+    <form class="row" hx-post="/ui/settings/chats/{{ c.id }}" hx-target="#main">
+      <select name="category_id">
+        <option value="">— без категории (отключён) —</option>
+        {% for cat in categories %}
+        <option value="{{ cat.id }}" {% if c.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+      <button>Сохранить</button>
+    </form>
+    {% endif %}
+    <button class="danger" hx-post="/ui/settings/chats/{{ c.id }}/delete" hx-target="#main"
+            hx-confirm="Удалить чат из CRM?">Удалить</button>
+  </div>
+</div>
+{% else %}
+<p class="muted">Чатов пока нет.</p>
+{% endfor %}
+
+<h2>Категории</h2>
+{% for cat in categories %}
+<div class="row card">
+  <form class="row" hx-post="/ui/settings/categories/{{ cat.id }}" hx-target="#main">
+    <input name="name" value="{{ cat.name }}" required>
+    <button class="secondary">Переименовать</button>
+  </form>
+  <button class="danger" hx-post="/ui/settings/categories/{{ cat.id }}/delete" hx-target="#main"
+          hx-confirm="Удалить категорию?">Удалить</button>
+</div>
+{% endfor %}
+<form class="row" hx-post="/ui/settings/categories" hx-target="#main">
+  <input name="name" placeholder="Новая категория" required>
+  <button>Добавить</button>
+</form>

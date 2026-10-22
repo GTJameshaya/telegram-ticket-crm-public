@@ -1,0 +1,37 @@
+<h2>Тикеты</h2>
+<form class="row" hx-get="/ui/tickets" hx-target="#main" hx-trigger="change">
+  <select name="status">
+    <option value="">Все статусы</option>
+    {% for code, label in Status.LABELS.items() %}
+    <option value="{{ code }}" {% if f.status == code %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <select name="category_id">
+    <option value="">Все категории</option>
+    {% for c in categories %}
+    <option value="{{ c.id }}" {% if f.category_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+    {% endfor %}
+  </select>
+  <select name="priority">
+    <option value="">Все приоритеты</option>
+    {% for code, label in Priority.LABELS.items() %}
+    <option value="{{ code }}" {% if f.priority == code %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+</form>
+<div style="margin-top:10px">
+{% for t in tickets %}
+  <a class="card" style="display:block;color:inherit" hx-get="/ui/tickets/{{ t.id }}" hx-target="#main">
+    <div class="row">
+      <b>#{{ t.number }}</b>
+      <span class="badge st-{{ t.status }}">{{ t.status_label }}</span>
+      <span class="badge pr-{{ t.priority }}">{{ t.priority_label }}</span>
+      <span class="muted">{{ t.category.name if t.category else "—" }}</span>
+    </div>
+    <div class="muted">{{ t.author.name if t.author else "" }} · {{ t.created_at|dt("%d.%m.%Y %H:%M") }}
+      {% if t.assignee %} · исп.: {{ t.assignee.name }}{% endif %}</div>
+  </a>
+{% else %}
+  <p class="muted">Тикетов нет.</p>
+{% endfor %}
+</div>

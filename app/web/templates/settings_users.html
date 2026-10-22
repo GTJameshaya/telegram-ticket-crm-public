@@ -1,0 +1,24 @@
+{% include "_flash.html" %}
+<h2>Операторы</h2>
+{% for u in staff %}
+<form class="row card" hx-post="/ui/users/{{ u.id }}" hx-target="#main">
+  <span><b>{{ u.name or "—" }}</b> <span class="muted">{{ u.tg_id }}</span></span>
+  <select name="role">
+    {% for code, label in Role.LABELS.items() %}
+    <option value="{{ code }}" {% if u.role == code %}selected{% endif %}>
+      {{ "Нет доступа" if code == Role.CLIENT else label }}</option>
+    {% endfor %}
+  </select>
+  <button>Сохранить</button>
+</form>
+{% endfor %}
+<h3>Добавить оператора</h3>
+<form class="card stack" hx-post="/ui/users" hx-target="#main">
+  <input name="tg_id" placeholder="Telegram ID (узнать: /id в чате с ботом)" required>
+  <input name="name" placeholder="Имя">
+  <select name="role">
+    <option value="{{ Role.OPERATOR }}">Оператор</option>
+    <option value="{{ Role.ADMIN }}">Админ</option>
+  </select>
+  <button>Добавить</button>
+</form>

@@ -1,0 +1,13 @@
+<form class="stack" hx-post="/ui/tickets/{{ ticket.id }}/email" hx-target="#main">
+  <select name="template_id" hx-get="/ui/tickets/{{ ticket.id }}/email-form" hx-target="#email-form"
+          hx-trigger="change" hx-include="closest form">
+    <option value="">— шаблон письма —</option>
+    {% for t in email_templates %}
+    <option value="{{ t.id }}" {% if template_id == t.id %}selected{% endif %}>{{ t.name }}</option>
+    {% endfor %}
+  </select>
+  <input type="email" name="to" value="{{ to }}" placeholder="Кому (email)" required>
+  <input name="subject" value="{{ subject }}" placeholder="Тема (метка [#{{ ticket.number }}] добавится сама)">
+  <textarea name="body" placeholder="Текст письма" required>{{ body }}</textarea>
+  <button>Отправить письмо</button>
+</form>

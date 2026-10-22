@@ -1,0 +1,37 @@
+:root {
+  --bg: var(--tg-theme-bg-color, #fff);
+  --text: var(--tg-theme-text-color, #222);
+  --hint: var(--tg-theme-hint-color, #888);
+  --link: var(--tg-theme-link-color, #2481cc);
+  --btn: var(--tg-theme-button-color, #2481cc);
+  --btn-text: var(--tg-theme-button-text-color, #fff);
+  --bg2: var(--tg-theme-secondary-bg-color, #f2f2f5);
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 15px/1.4 -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); }
+a { color: var(--link); text-decoration: none; cursor: pointer; }
+nav { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px; background: var(--bg2); position: sticky; top: 0; z-index: 2; }
+nav a { padding: 4px 10px; border-radius: 12px; background: var(--bg); }
+main { padding: 10px; }
+h2 { font-size: 18px; margin: 6px 0 10px; }
+h3 { font-size: 16px; margin: 14px 0 6px; }
+.card { background: var(--bg2); border-radius: 10px; padding: 10px; margin-bottom: 8px; }
+.muted { color: var(--hint); font-size: 13px; }
+.row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; background: var(--bg); }
+.st-new { background: #e3f2fd; color: #0d47a1; } .st-in_progress { background: #fff3e0; color: #e65100; }
+.st-postponed { background: #eceff1; color: #455a64; } .st-closed { background: #e8f5e9; color: #1b5e20; }
+.pr-high { background: #ffebee; color: #b71c1c; } .pr-urgent { background: #b71c1c; color: #fff; }
+.msg { border-left: 3px solid var(--hint); padding: 6px 8px; margin: 6px 0; background: var(--bg2); border-radius: 0 8px 8px 0; }
+.msg.internal { border-color: #ffb300; } .msg.public { border-color: #43a047; }
+.msg.email_in, .msg.email_out { border-color: #8e24aa; }
+.msg pre { white-space: pre-wrap; font: inherit; margin: 4px 0 0; }
+input, select, textarea { font: inherit; padding: 6px; border: 1px solid var(--hint); border-radius: 8px; background: var(--bg); color: var(--text); max-width: 100%; }
+textarea { width: 100%; min-height: 80px; }
+button { font: inherit; padding: 6px 12px; border: 0; border-radius: 8px; background: var(--btn); color: var(--btn-text); cursor: pointer; }
+button.secondary { background: var(--bg2); color: var(--text); border: 1px solid var(--hint); }
+button.danger { background: #c62828; color: #fff; }
+.notice { background: #e8f5e9; color: #1b5e20; padding: 8px; border-radius: 8px; margin-bottom: 8px; }
+.error { background: #ffebee; color: #b71c1c; padding: 8px; border-radius: 8px; margin-bottom: 8px; }
+img.att { max-width: 100%; max-height: 240px; border-radius: 6px; display: block; margin-top: 4px; }
+form.stack > * { display: block; margin-bottom: 6px; width: 100%; }

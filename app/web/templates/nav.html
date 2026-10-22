@@ -1,0 +1,10 @@
+<nav>
+  <a hx-get="/ui/tickets" hx-target="#main">Тикеты</a>
+  {% if user.is_admin %}
+  <a hx-get="/ui/settings/chats" hx-target="#main">Чаты и категории</a>
+  <a hx-get="/ui/settings/reply-templates" hx-target="#main">Шаблоны ответов</a>
+  <a hx-get="/ui/settings/email-templates" hx-target="#main">Шаблоны писем</a>
+  <a hx-get="/ui/users" hx-target="#main">Операторы</a>
+  {% endif %}
+  <span class="muted" style="margin-left:auto">{{ user.name }} · {{ Role.LABELS[user.role] }}</span>
+</nav>

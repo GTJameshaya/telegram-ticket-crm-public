@@ -1,0 +1,6 @@
+# Сертификат Let's Encrypt выпускается автоматически для WEBAPP_DOMAIN (например 203.0.113.10.sslip.io)
+{$WEBAPP_DOMAIN} {
+	encode gzip
+	# Всё (Mini App, /static, /api/* — в т.ч. POST /api/ingest/ticket) проксируется в web
+	reverse_proxy web:8000
+}

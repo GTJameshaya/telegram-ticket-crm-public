@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRM тикетов</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="/static/htmx.min.js"></script>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <div id="nav"></div>
+  <main id="main"><p class="muted">Загрузка…</p></main>
+  <script>
+    const tg = window.Telegram && window.Telegram.WebApp;
+    const initData = tg ? tg.initData : "";
+    if (tg) { tg.ready(); tg.expand(); }
+    // initData уходит в каждом запросе; сервер проверяет подпись по токену бота
+    document.body.addEventListener("htmx:configRequest", (e) => {
+      e.detail.headers["X-Telegram-Init-Data"] = initData;
+    });
+    // Показывать страницы ошибок (401/403/404) вместо молчаливого игнора
+    document.body.addEventListener("htmx:beforeSwap", (e) => {
+      if (e.detail.xhr.status >= 400) { e.detail.shouldSwap = true; e.detail.isError = false; }
+    });
+    // Ссылки на файлы: initData передаём в query, т.к. заголовок к <img>/<a> не добавить
+    window.fileUrl = (id) => "/files/" + id + "?init_data=" + encodeURIComponent(initData);
+    document.body.addEventListener("htmx:afterSwap", () => {
+      document.querySelectorAll("[data-file-id]").forEach((el) => {
+        const url = window.fileUrl(el.dataset.fileId);
+        if (el.tagName === "IMG") el.src = url; else el.href = url;
+      });
+    });
+    window.applyTemplate = (sel) => {
+      const ta = document.getElementById("reply-text");
+      const opt = sel.options[sel.selectedIndex];
+      if (opt && opt.dataset.text !== undefined) ta.value = opt.dataset.text;
+      sel.selectedIndex = 0;
+    };
+    if (!initData) {
+      document.getElementById("main").innerHTML =
+        '<div class="error">Откройте CRM внутри Telegram (кнопка меню бота).</div>';
+    } else {
+      htmx.ajax("GET", "/ui/me", {target: "#nav"});
+      htmx.ajax("GET", "/ui/tickets", {target: "#main"});
+    }
+  </script>
+</body>
+</html>

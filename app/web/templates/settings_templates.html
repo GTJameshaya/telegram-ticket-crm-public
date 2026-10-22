@@ -1,0 +1,24 @@
+{% include "_flash.html" %}
+<h2>{{ title }}</h2>
+<p class="muted">Подстановки: {ticket_id}, {text}, {author}, {category}, {priority}, {status}, {assignee}.</p>
+{% for t in items %}
+<form class="card stack" hx-post="/ui/settings/{{ kind }}/{{ t.id }}" hx-target="#main">
+  <input name="name" value="{{ t.name }}" placeholder="Название" required>
+  {% if is_email %}<input name="subject" value="{{ t.subject }}" placeholder="Тема">{% endif %}
+  <textarea name="text" placeholder="Текст">{{ t.body if is_email else t.text }}</textarea>
+  <div class="row">
+    <button>Сохранить</button>
+    <button class="danger" type="button" hx-post="/ui/settings/{{ kind }}/{{ t.id }}/delete"
+            hx-target="#main" hx-confirm="Удалить шаблон?">Удалить</button>
+  </div>
+</form>
+{% else %}
+<p class="muted">Шаблонов пока нет.</p>
+{% endfor %}
+<h3>Новый шаблон</h3>
+<form class="card stack" hx-post="/ui/settings/{{ kind }}" hx-target="#main">
+  <input name="name" placeholder="Название{% if not is_email %} (для команды /t){% endif %}" required>
+  {% if is_email %}<input name="subject" placeholder="Тема">{% endif %}
+  <textarea name="text" placeholder="Текст"></textarea>
+  <button>Добавить</button>
+</form>
